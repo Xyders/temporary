@@ -1,0 +1,44 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mumble-config
+  namespace: test0526
+data:
+  mumble.ini: |
+    # Murmur configuration file.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mumble
+  labels:
+    app: mumble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mumble
+  template:
+    metadata:
+      labels:
+        app: mumble
+    spec:
+      containers:
+      - image: busybox
+        name: mumble
+        # command: [ "/bin/sh", "-c", "ls /data/" ]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /data/mumble.ini
+          subPath: mumble.ini
+      volumes:
+      - name: config-volume
+        configMap:
+          name: mumble-config
+      nodeSelector:
+        type: rcom-node
+      tolerations:
+      - key: node-role.kubernetes.io/worker
+        operator: "Exists"
+        effect: "NoSchedule"
