@@ -42,3 +42,6 @@ spec:
       - key: node-role.kubernetes.io/worker
         operator: "Exists"
         effect: "NoSchedule"
+      - key: node.kubernetes.io/unreachable
+        operator: "Exists"
+        effect: "NoSchedule"
